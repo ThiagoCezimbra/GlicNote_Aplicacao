@@ -1,0 +1,162 @@
+/* Fundo do site e fontes pretas */
+body {
+    background-color: #bfc7ca;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: stretch; /* Garante que os containers ocupem toda a altura */
+    color: black !important; 
+}
+
+/* Container esquerdo (para o perfil) ajustado para ocupar toda a altura da página */
+.left-container {
+    width: 90%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.9);
+    background-image: url('/images/background_note.jpeg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    border-right: 10px solid blue;
+    border-left: 10px solid blue;
+    border-radius: 20px;
+    padding: 20px;
+    height: auto;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.botao-container {
+    display: flex;
+    justify-content: center; /* Centraliza os botões horizontalmente */
+    gap: 10px; /* Adiciona um espaço entre os botões */
+}
+
+.btn-deletar, .btn-alterar {
+    width: 40%; /* Reduzido para 40% da largura original */
+    padding: 4px 8px; /* Reduzido o padding */
+    background-color: #007bff;
+    border: none;
+    color: white;
+    font-weight: bold;
+    font-size: 10px; /* Fonte menor */
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+/* Menu dentro do container */
+.menu {
+    width: 100%;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo semitransparente */
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+}
+/* Classe para o fundo cinza com opacidade */
+.title-background {
+    background-color: rgba(191, 199, 202, 0.9); /* Cinza do fundo com 0.9 de opacidade */
+    padding: 10px; /* Adiciona algum padding ao redor do texto */
+    border-radius: 5px; /* Adiciona bordas arredondadas se desejar */
+    color: black; /* Cor do texto */
+    display: inline-block; /* Ajusta a largura do fundo ao texto */
+}
+
+
+.menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.menu li {
+    margin: 0 15px;
+}
+
+.menu a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.menu a:hover {
+    text-decoration: underline;
+}
+
+/* Historico de aferições com rolagem */
+.historico-container {
+    max-height: 400px;
+    overflow-y: auto; /* Ativa a rolagem vertical */
+    margin-top: 20px;
+}
+
+.historico-item {
+    background-color: rgba(248, 249, 250, 0.9); /* Cinza claro translúcido */
+    border: 1px solid #dee2e6;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column; /* Alinha o texto verticalmente */
+}
+
+.historico-item p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* Ajuste para dispositivos móveis */
+@media (max-width: 768px) {
+    .left-container {
+        width: 100%;
+        border-right: 5px solid blue; /* Ajusta a largura da borda para dispositivos móveis */
+        border-left: 5px solid blue;  
+        padding: 10px;
+        border-radius: 15px; /* Ajusta o raio das bordas para dispositivos móveis */
+    }
+
+    .historico-container {
+        max-height: 300px; /* Ajusta a altura máxima para dispositivos móveis */
+    }
+
+    .menu {
+        padding: 5px; /* Ajusta o padding para dispositivos móveis */
+    }
+
+    .menu a {
+        font-size: 14px; /* Ajusta o tamanho da fonte para telas menores */
+    }
+}
+
+/* Ajuste para telas muito pequenas */
+@media (max-width: 480px) {
+    .left-container {
+        padding: 5px;
+        border-right: 7px solid blue; /* Ajusta ainda mais a largura da borda em telas pequenas */
+        border-left: 7px solid blue; 
+        border-radius: 10px; /* Ajusta o raio das bordas em telas pequenas */
+    }
+
+    .historico-container {
+        max-height: 250px; /* Ajusta a altura máxima em telas pequenas */
+    }
+
+    .menu {
+        padding: 10px; /* Ajusta o padding para telas muito pequenas */
+    }
+
+    .menu a {
+        font-size: 13px; /* Tamanho da fonte */
+        letter-spacing: 1px; /* Ajuste para separar as letras */
+    }
+}

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Usuário</title>
+    <link rel="stylesheet" href="/css/perfil.css">
+</head>
+<body>
+    <div class="left-container">
+        <div class="hamburger-menu" onclick="toggleMenu()">
+            &#9776;
+        </div>
+        <nav class="menu">
+            <ul>
+                <li><a href="/perfil" class="dynamic-usuarioId">Perfil</a></li>
+                <li><a href="/registrar" class="dynamic-usuarioId">Nova Medida</a></li>
+                <li><a href="/historico" class="dynamic-usuarioId">Histórico de Medidas</a></li>
+                <li><a href="/login">Sair</a></li>
+            </ul>
+        </nav>
+
+        <div class="profile-box">
+            <h2>Perfil do Usuário</h2>
+            <div class="photo-container">
+                <img id="profile-picture" src="/images/do-utilizador.png" alt="Foto do perfil">
+                <input type="file" id="upload-photo" accept="image/*">
+            </div>
+
+            <div class="profile-info">
+                <p><strong>Nome:</strong> <input type="text" id="nome" disabled></p>
+                <p><strong>Sobrenome:</strong> <input type="text" id="sobrenome" disabled></p>
+                <p><strong>Data de Nascimento:</strong> 
+                    <input type="text" id="data_nasc" placeholder="dd/mm/aaaa" disabled>
+                </p>
+                <p><strong>Tipo de Diabetes:</strong> <input type="text" id="tipo_diabetes" disabled></p>
+                <p><strong>Email:</strong> <input type="email" id="email" disabled></p>
+                <!-- Campos de senha: aparecem apenas em modo de edição -->
+                <div id="senha-container" style="display: none;">
+                    <p><strong>Senha:</strong> <input type="password" id="senha" placeholder="Digite sua senha"></p>
+                    <p><strong>Confirmar Senha:</strong> <input type="password" id="confirma_senha" placeholder="Confirme sua senha"></p>
+                </div>
+            </div>
+
+            <div class="botao-container">
+                <button class="btn-alterar" onclick="habilitarEdicao()">Alterar</button>
+                <button class="btn-salvar" onclick="salvarAlteracoes()" style="display: none;">Salvar Alterações</button>
+                <!-- Botão de exclusão do perfil -->
+                <button class="btn-deletar" onclick="excluirPerfil()">Deletar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="right-container"></div>
+
+    <script>
+        // Função para excluir perfil
+        async function excluirPerfil() {
+            const confirmacao = confirm("Você tem certeza que deseja excluir sua conta?");
+            if (!confirmacao) return;
+
+            try {
+                const response = await fetch('/perfil/excluir', { method: 'DELETE' });
+
+                if (response.ok) {
+                    alert('Perfil excluído com sucesso!');
+                    // Redireciona para a página de login após a exclusão
+                    window.location.href = '/login';
+                } else {
+                    const error = await response.json();
+                    alert(`Erro ao excluir o perfil: ${error.message}`);
+                }
+            } catch (error) {
+                console.error('Erro ao excluir perfil:', error);
+                alert('Erro ao tentar excluir o perfil.');
+            }
+        }
+
+        // Carregar perfil ao abrir a página
+        async function carregarPerfil() {
+            try {
+                const response = await fetch('/perfil/dados');
+                if (response.ok) {
+                    const usuario = await response.json();
+                    document.getElementById('nome').value = usuario.nome;
+                    document.getElementById('sobrenome').value = usuario.sobrenome;
+                    document.getElementById('data_nasc').value = formatarData(usuario.data_nasc);
+                    document.getElementById('tipo_diabetes').value = usuario.tipo_diabetes;
+                    document.getElementById('email').value = usuario.email;
+                } else {
+                    console.error('Erro ao carregar perfil:', response.status);
+                }
+            } catch (error) {
+                console.error('Erro ao buscar dados do perfil:', error);
+            }
+        }
+
+        // Formatar data para "dd/mm/aaaa"
+        function formatarData(dataISO) {
+            const data = new Date(dataISO);
+            const dia = String(data.getDate()).padStart(2, '0');
+            const mes = String(data.getMonth() + 1).padStart(2, '0');
+            const ano = data.getFullYear();
+            return `${dia}/${mes}/${ano}`;
+        }
+
+        // Converter data para o formato ISO antes de enviar
+        function formatarParaISO(dataBR) {
+            const [dia, mes, ano] = dataBR.split('/');
+            return `${ano}-${mes}-${dia}`;
+        }
+
+        // Alternar para modo de edição
+        function habilitarEdicao() {
+            document.querySelectorAll('.profile-info input').forEach(input => input.disabled = false);
+            document.getElementById('senha-container').style.display = 'block'; // Exibe senha
+            document.querySelector('.btn-alterar').style.display = 'none';
+            document.querySelector('.btn-salvar').style.display = 'inline-block';
+        }
+
+        // Salvar alterações
+        async function salvarAlteracoes() {
+    const nome = document.getElementById('nome').value;
+    const sobrenome = document.getElementById('sobrenome').value;
+    const data_nascBR = document.getElementById('data_nasc').value;
+    const tipo_diabetes = document.getElementById('tipo_diabetes').value;
+    const email = document.getElementById('email').value;
+    const senha = document.getElementById('senha').value;
+    const confirma_senha = document.getElementById('confirma_senha').value;
+
+    if (senha && senha !== confirma_senha) {
+        alert('As senhas não coincidem!');
+        return;
+    }
+
+    // Converter a data para formato ISO
+    const data_nasc = formatarParaISO(data_nascBR);
+
+    try {
+        const dados = {
+            nome, sobrenome, data_nasc, tipo_diabetes, email, senha: senha ? senha : undefined
+        };
+
+        const response = await fetch('/perfil/atualizar', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(dados),
+        });
+
+        if (response.ok) {
+            alert('Alterações salvas com sucesso!');
+            document.querySelectorAll('.profile-info input').forEach(input => input.disabled = true);
+            document.getElementById('senha-container').style.display = 'none';
+            document.querySelector('.btn-alterar').style.display = 'inline-block';
+            document.querySelector('.btn-salvar').style.display = 'none';
+        } else {
+            const error = await response.json();
+            alert(`Erro ao salvar alterações: ${error.message}`);
+        }
+    } catch (error) {
+        console.error('Erro ao salvar alterações:', error);
+        alert('Erro ao processar as alterações.');
+    }
+}
+
+
+        // Inicializar
+        carregarPerfil();
+    </script>
+
+    <script src="/js/menu.js"></script>
+</body>
+</html>

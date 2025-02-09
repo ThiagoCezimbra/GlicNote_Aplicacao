@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico de Glicemia</title>
+    <link rel="stylesheet" href="/css/registros.css">
+</head>
+<body>
+
+<div class="left-container">
+    <div class="menu">
+        <ul>
+            <li><a href="/perfil" class="dynamic-usuarioId">Perfil</a></li>
+            <li><a href="/registrar" class="dynamic-usuarioId">Nova Medida</a></li>
+            <li><a href="/historico" class="dynamic-usuarioId">Histórico de Medidas</a></li>
+            <li><a href="/login">Sair</a></li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <h2 class="title-background">Histórico de Aferições de Glicemia</h2>
+        <div class="historico-container" id="historico-container">
+            <!-- Os registros de aferição de glicemia serão inseridos aqui via JavaScript -->
+        </div>
+    </div>
+</div>
+
+<script src="/js/menu.js"></script>
+<script>
+    // Função para carregar o histórico de aferições
+    async function carregarHistorico() {
+        try {
+            const response = await fetch('/api/historico');
+            const afericoes = await response.json();
+
+            const container = document.getElementById('historico-container');
+            container.innerHTML = ''; // Limpa o container
+
+            afericoes.forEach(afericao => {
+                const item = document.createElement('div');
+                item.classList.add('historico-item');
+                
+                // Verificar e formatar a data e hora no fuso horário correto
+                const dataHora = new Date(afericao.data_hora);
+                const dataFormatada = dataHora.toLocaleString('pt-BR', { 
+                    timeZone: 'America/Sao_Paulo', // Fuso horário de Brasília
+                    weekday: 'short', 
+                    year: 'numeric', 
+                    month: '2-digit', 
+                    day: '2-digit', 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+
+                item.innerHTML = `
+                    <p><span class="historico-label">Data e Hora:</span> ${dataFormatada}</p>
+                    <p><span class="historico-label">Valor:</span> ${afericao.valor_glicemia} mg/dL</p>
+                    <p><span class="historico-label">Tipo de Medição:</span> ${afericao.tipo_medicacao}</p>
+                    <p><span class="historico-label">Notas:</span> ${afericao.notas || 'Nenhuma'}</p>
+                    <p><span class="historico-label">Medicação/Insulina:</span> ${afericao.medicacao_insulina || 'Nenhuma'}</p>
+                    <div class="botao-container">
+                        <button onclick="alterarAfericao(${afericao.id})" class="btn-alterar">Alterar</button>
+                        <button onclick="deletarAfericao(${afericao.id})" class="btn-deletar">Deletar</button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        } catch (error) {
+            console.error('Erro ao carregar o histórico:', error);
+            alert('Erro ao carregar o histórico de aferições.');
+        }
+    }
+
+    // Função de Alteração
+    function alterarAfericao(id) {
+        window.location.href = `/registrar?id=${id}`;
+    }
+
+    // Função de Deleção
+    function deletarAfericao(id) {
+        if (confirm("Deseja realmente deletar esta aferição?")) {
+            fetch(`/api/afericao/deletar/${id}`, { method: 'DELETE' })
+                .then(response => response.ok ? response.json() : Promise.reject('Erro ao deletar a aferição'))
+                .then(() => window.location.reload())
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Erro ao deletar a aferição.');
+                });
+        }
+    }
+
+    // Carrega o histórico ao carregar a página
+    window.onload = carregarHistorico;
+</script>
+
+</body>
+</html>

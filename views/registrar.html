@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Aferição de Glicemia</title>
+    <link rel="stylesheet" href="/css/registrar.css">
+</head>
+<body>
+
+<div class="left-container">
+    <!-- Menu -->
+    <div class="menu">
+        <ul>
+            <li><a href="/perfil" class="dynamic-usuarioId">Perfil</a></li>
+            <li><a href="/registrar" class="dynamic-usuarioId">Nova Medida</a></li>
+            <li><a href="/historico" class="dynamic-usuarioId">Histórico de Medidas</a></li>
+            <li><a href="/login">Sair</a></li>
+        </ul>
+    </div>
+
+    <!-- Formulário de Aferição -->
+    <div class="form-container">
+        <h2 class="title-background">Cadastro de Aferição de Glicemia</h2>
+        <form id="afericao-form" method="POST" action="">
+            <input type="hidden" id="afericao-id" name="afericao_id" value="">
+
+            <label for="valor-glicemia">Valor da Glicemia (mg/dL):</label>
+            <input type="number" id="valor-glicemia" name="valor_glicemia" required>
+
+            <label for="data-hora">Data e Hora:</label>
+            <input type="datetime-local" id="data-hora" name="data_hora" required>
+
+            <label for="tipo-medicacao">Tipo de Medição:</label>
+            <select id="tipo-medicacao" name="tipo_medicacao" required>
+                <option value="jejum">Jejum</option>
+                <option value="pós-prandial">Pós-prandial</option>
+                <option value="aleatória">Aleatória</option>
+            </select>
+
+            <label for="notas">Notas:</label>
+            <textarea id="notas" name="notas"></textarea>
+
+            <label for="medicacao">Medicação / Insulina:</label>
+            <input type="text" id="medicacao" name="medicacao_insulina">
+
+            <button type="submit">Salvar Aferição</button>
+        </form>
+    </div>
+</div>
+
+<script>
+// Função para preencher o formulário de aferição com os dados existentes (caso seja uma alteração)
+function preencherFormularioAfericao(afericao) {
+    document.getElementById('afericao-id').value = afericao.id;
+    document.getElementById('valor-glicemia').value = afericao.valor_glicemia;
+
+    // Utiliza o valor da string exatamente como está no banco de dados
+    const dataHoraString = afericao.data_hora;
+    console.log("Data e Hora (string bruta do banco):", dataHoraString);
+
+    // Define a string bruta para o campo de data e hora
+    document.getElementById('data-hora').value = dataHoraString;
+
+    document.getElementById('tipo-medicacao').value = afericao.tipo_medicacao;
+    document.getElementById('notas').value = afericao.notas || '';
+    document.getElementById('medicacao').value = afericao.medicacao_insulina || '';
+}
+
+
+
+
+// Verificar se estamos editando uma aferição existente
+const urlParams = new URLSearchParams(window.location.search);
+const afericaoId = urlParams.get('id');
+
+if (afericaoId) {
+    // Define a ação do formulário como a rota de atualização
+    document.getElementById('afericao-form').action = `/api/afericao/alterar/${afericaoId}`;
+
+    // Carrega os dados da aferição para edição
+    fetch(`/api/afericao/alterar/${afericaoId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data) {
+                preencherFormularioAfericao(data);
+            }
+        })
+        .catch(error => console.error('Erro ao carregar dados da aferição:', error));
+} else {
+    // Define a ação do formulário como a rota de criação se não houver ID na URL
+    document.getElementById('afericao-form').action = "/api/registrar/nova-medida";
+}
+</script>
+
+</body>
+<script src="/js/menu.js"></script>
+
+</html>

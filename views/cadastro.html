@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Cadastro</title>
+    <link rel="stylesheet" href="/public/css/cadastro.css">
+
+
+</head>
+<body>
+    <div class="left-container">
+        <div class="login-box">
+            <h2>Cadastro</h2>
+            <!--http://localhost:3000/cadastro/cadastro-->
+            <form id="cadastroForm" method="POST" action="http://localhost:3000/cadastro/cadastro">
+
+                <!-- Input de Nome -->
+                <input type="text" class="name-input" id="nome" name="nome" placeholder="Nome" required>
+            
+                <!-- Input de Sobrenome -->
+                <input type="text" class="surname-input" id="sobrenome" name="sobrenome" placeholder="Sobrenome" required>
+            
+                <!-- Input de Data de Nascimento (com calendário) -->
+                <label for="date" class="label-background">Data de nascimento</label>
+                <input type="date" id="data_nasc" name="data_nasc" class="date-input" required>
+            
+                <!-- Select de Tipo de Diabetes -->
+                <select id="tipo_diabetes" name="tipo_diabetes" class="diabetes-select" required>
+                    <option value="" disabled selected>Selecione o tipo de diabetes</option>
+                    <option value="tipo1">Tipo 1</option>
+                    <option value="tipo2">Tipo 2</option>
+                    <option value="gestacional">Gestacional</option>
+                </select>
+            
+                <!-- Input de Email -->
+                <input type="email" id="email" class="email-input" name="email" placeholder="Inserir Email" required>
+            
+                <!-- Input de Senha -->
+                <input type="password" id="senha" class="password-input" name="senha" placeholder="Escolha uma senha (6 a 8 dígitos. Letras e números)" required>
+            
+                <!-- Repetir Senha -->
+                <input type="password" id="repetir_senha" class="password-input" name="repetir_senha" placeholder="Repetir Senha" required>
+            
+                <!-- Botões para Enviar email de confirmação e Voltar -->
+                <div class="button-container">
+                    <button class="login-box button" type="submit">Cadastrar</button>
+                    <button class="login-box button back-button" type="button" onclick="history.back()">Voltar</button>
+                </div>
+            </form>
+            
+        </div>
+    </div>
+
+    
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Usuário</title>
+    <link rel="stylesheet" href="/css/inicio.css">
+    <script>
+        // Script para buscar os dados da sessão
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+                const response = await fetch('/get-session-data');
+                const data = await response.json();
+
+                if (data.usuarioId) {
+                    document.querySelectorAll(".dynamic-usuarioId").forEach(element => {
+                        element.href = element.href.replace(":usuarioId", data.usuarioId);
+                    });
+
+                    document.getElementById("usuario-id-display").textContent = data.usuarioId;
+                } else {
+                    alert("Erro: ID do usuário não encontrado.");
+                }
+            } catch (error) {
+                console.error("Erro ao carregar dados da sessão:", error);
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="left-container">
+        <div class="hamburger-menu" onclick="toggleMenu()">&#9776;</div>
+
+        <nav class="menu">
+            <ul>
+                <li><a href="/perfil" class="dynamic-usuarioId">Perfil</a></li>
+                <li><a href="/registrar" class="dynamic-usuarioId">Nova Medida</a></li>
+                <li><a href="/historico" class="dynamic-usuarioId">Histórico de Medidas</a></li>
+                <li><a href="/login">Sair</a></li>
+            </ul>
+            
+        </nav>
+
+        <div class="profile-box">
+            <h2 class="titulo-bem-vindo">Seja Bem-Vindo à Aplicação!</h2>
+
+
+    </div>
+
+    <div class="right-container"></div>
+</body>
+<script src="/js/menu.js"></script>
+
+</html>
